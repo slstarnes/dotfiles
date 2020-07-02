@@ -18,6 +18,6 @@ if PATTERN in original_content:
     new_content = PATTERN + '\n' + new_content + '\n' + PATTERN
     updated_content = original_content.replace(inside, new_content)
 else:
-    updated_content = original_content + '\n' * 2 + PATTERN + '\n' + new_content + '\n' + PATTERN
+    updated_content = original_content + '\n' * 2 + PATTERN + '\n' + new_content + '\n' + PATTERN + '\n'
 with open(original_file, 'w') as f: f.write(updated_content)
 print('Successful merge')
