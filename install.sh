@@ -26,15 +26,16 @@ cd "$dir"
 echo "Done."
 echo 
 
-# move any existing dotfiles in homedir to dotfiles_old directory, then create symlinks 
+# if file is in append_files list then append content to end of original file (no symlink)
+# unless original file does not exist in which case do create a symlink to /dotfiles version
+# if not in the append_files list, move original file to dotfiles_old directory, then create symlinks 
 for file in $files; do
-    new_file_path="$dir"
-    new_file_path+="/.${file}"
+    new_file_path="$dir/.${file}"
     original_file_path="$HOME/.$file"
     echo "30 $new_file_path, $original_file_path"
     for file_a in $append_files; do
-        echo "32 $file_a"
-        if [ "$file_a" == "$file" ] 
+        echo "32 $file_a $file"
+        if [ "$file_a" == "$file" ]
         then
             append_match=1
             echo "36 -- match"
@@ -43,38 +44,46 @@ for file in $files; do
         fi
     done
     
-    if [ -e $original_file_path ]
+    if [ -e "$original_file_path" ]
     then
         echo "45 $original_file_path exists"
         if [ "$append_match" == "1" ] 
         then
-            # echo "48 - append_match is true, $original_file_path, $new_file_path, $tmp_fn"
+            echo "Copying $original_file_path to $backupDir/.$file"
+            cp "$original_file_path" "$backupDir/$file"
+            echo "48 - append_match is true, $original_file_path, $new_file_path, $tmp_fn"
             # prepend
-            # echo "$original_file_path + $new_file_path > $new_file_path"
-            # echo "------- $original_file_path -------"
-            # echo "$(cat $original_file_path)"
-            # echo
-            # echo "------- $new_file_path -------"
-            # echo "$(cat $new_file_path)"
-            # echo
+            echo "$original_file_path + $new_file_path > $new_file_path"
+            echo "------- $original_file_path -------"
+            echo "$(cat "$original_file_path")"
+            echo
+            echo "------- $new_file_path -------"
+            echo "$(cat $new_file_path)"
+            echo
             # cat "$original_file_path" "$new_file_path" > "$tmp_fn"
-            for f in "$original_file_path" "$new_file_path"; do
-                # echo "62 $f" 
-                (cat "${f}"; echo) >> $tmp_fn
-            done
-            mv "$tmp_fn" "$new_file_path"
-            rm -f "$tmp_fn"
-            # echo "------- $new_file_path -------"
-            # echo "$(cat $new_file_path)"
+            # for f in "$original_file_path" "$new_file_path"; do
+            #     echo "62 $f" 
+            #     (cat "${f}"; echo) >> $tmp_fn
+            # done
+            # mv "$tmp_fn" "$original_file_path"
+            # rm -f "$tmp_fn"
+            python merge.py "$original_file_path" "$new_file_path"
+            echo "------- $original_file_path -------"
+            echo "$(cat $original_file_path)"
             
+        else
+            echo "Moving existing dotfile from $original_file_path to $backupDir/.$file"
+            mv "$original_file_path" "$backupDir/.$file"
+            echo "Creating symlink to $new_file_path in home directory."
+            ln -s "$new_file_path" "$original_file_path"
+            echo
         fi
-        echo "Moving any existing dotfiles from $original_file_path to $backupDir/.$file"
-        mv "$original_file_path" "$backupDir/$file"
         # echo "Removing existing dotfile"
         # rm "$HOME/.$file"
+    else
+        echo "Creating symlink to $new_file_path in home directory."
+        ln -s "$new_file_path" "$original_file_path"
+        echo
     fi
-    echo "Creating symlink to $file in home directory."
-    ln -s "$new_file_path" "$original_file_path"
-    echo
 done
 echo 
