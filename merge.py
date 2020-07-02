@@ -17,7 +17,6 @@ if PATTERN in original_content:
     inside = original_content[original_content.find(PATTERN):original_content[::-1].find(PATTERN)]
     new_content = PATTERN + '\n' + new_content + '\n' + PATTERN
     updated_content = original_content.replace(inside, new_content)
-    print(updated_content)
 else:
     updated_content = original_content + '\n' * 2 + PATTERN + '\n' + new_content + '\n' + PATTERN
 with open(original_file, 'w') as f: f.write(updated_content)
