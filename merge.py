@@ -20,3 +20,4 @@ if PATTERN in original_content:
 else:
     updated_content = original_content + '\n' * 2 + PATTERN + '\n' + new_content + '\n' + PATTERN
 with open(original_file, 'w') as f: f.write(updated_content)
+print('Successful merge')

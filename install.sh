@@ -32,14 +32,10 @@ echo
 for file in $files; do
     new_file_path="$dir/.${file}"
     original_file_path="$HOME/.$file"
-    echo "30 $new_file_path, $original_file_path"
     for file_a in $append_files; do
-        echo "32 $file_a $file"
         if [ "$file_a" == "$file" ]
         then
             append_match=1
-            echo "36 -- match"
-            echo "append_match $append_match"
             break
         fi
     done
